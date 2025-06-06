@@ -1,0 +1,5 @@
+/* Mantine */
+@import '@mantine/core/styles.css';
+
+/* Tailwind */
+@import 'tailwindcss';

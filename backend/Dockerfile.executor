@@ -1,0 +1,38 @@
+# Dockerfile for the Python execution environment
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install common Python packages
+RUN pip install --no-cache-dir \
+    numpy \
+    pandas \
+    matplotlib \
+    seaborn \
+    pillow \
+    requests \
+    flask \
+    fastapi
+
+# Create non-root user
+RUN useradd -m -u 1000 codeuser
+
+# Create app directories
+RUN mkdir -p /app/user_files && \
+    chown -R codeuser:codeuser /app
+
+# Set working directory
+WORKDIR /app
+
+# Switch to non-root user
+USER codeuser
+
+# Keep container running
+CMD ["tail", "-f", "/dev/null"]
