@@ -19,7 +19,7 @@ from typing import Optional, Dict, Any
 app = FastAPI(
     title="Code Execution API with Docker",
     description="Execute Python code in isolated Docker containers",
-    version="2.0.0"
+    version="1.0.1"
 )
 
 app.add_middleware(
@@ -50,6 +50,7 @@ docker_sessions = {}
 class CodeInput(BaseModel):
     sourceCode: str
     email: Optional[str] = None
+    session_id: Optional[str] = None
 
 class DockerSession:
     def __init__(self, session_id: str):
@@ -81,7 +82,7 @@ class DockerSession:
                 name=f"code_session_{self.session_id}",
                 mem_limit="512m",
                 cpu_quota=50000,
-                network_mode="none"
+                network_mode="bridge"
             )
             self.container_id = self.container.id
             print(f"Created container {self.container_id[:12]} for session {self.session_id}")
@@ -369,16 +370,26 @@ async def health_check():
 
 @app.post("/execute")
 async def execute_python_code(payload: CodeInput):
-    """Execute Python code in a temporary Docker container"""
+    """Execute Python code in the session's Docker container"""
     if not docker_client:
         raise HTTPException(status_code=503, detail="Docker not available")
 
-    temp_session_id = str(uuid.uuid4())
+    # Get or create a session ID from the payload
+    session_id = payload.session_id if hasattr(payload, 'session_id') and payload.session_id else str(uuid.uuid4())
 
     try:
-        docker_session = DockerSession(temp_session_id)
+        # Check if this session already exists
+        if session_id not in docker_sessions:
+            # Create a new session if it doesn't exist
+            docker_sessions[session_id] = VirtualTerminal(session_id)
+
+        # Use the existing session's Docker container
+        docker_session = docker_sessions[session_id].docker_session
+
+        # Execute code in the persistent container
         result = docker_session.execute_python_code(payload.sourceCode, email=payload.email)
-        docker_session.cleanup()
+
+        # Keep the container running
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Execution error: {str(e)}")

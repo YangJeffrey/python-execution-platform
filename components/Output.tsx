@@ -36,10 +36,11 @@ export const Output = ({ editorRef, sessionId }: { editorRef: any; sessionId: st
         content: code,
       });
 
-      // Execute the code using Docker
+      // Execute the code using the same session container
       const response = await axios.post(`http://${process.env.NEXT_PUBLIC_API_ADDRESS}/execute`, {
         sourceCode: code,
         email: 'user@gmail.com',
+        session_id: sessionId,
       });
 
       const stdout = response.data?.run?.stdout || '';

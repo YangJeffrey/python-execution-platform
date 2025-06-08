@@ -52,7 +52,7 @@ const Drafts: React.FC<Props> = (props) => {
         New Script
       </Text>
       <SimpleGrid w="100%" cols={{ base: 1, sm: 2, lg: 4 }} p={0} spacing="md">
-        {props.drafts.reverse().map((post) => (
+        {props.drafts.map((post) => (
           <div key={post.id}>
             <Post post={post} />
           </div>
