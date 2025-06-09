@@ -1,9 +1,8 @@
-# Fullstack Web Python Execution Platform
+# Full Stack Web Python Execution Platform
 
 Built with Next.js, TypeScript, and FastAPI, the platform uses Docker-in-Docker to provide isolated, real-time code execution environments.
 
 ![Demo Screenshot](/public/screenshot-example.png)
-[Watch Demo Video](https://raw.githubusercontent.com/yangjeffrey/python-execution-platform/main/public/pythonexecutionplatform.mp4)
 
 ### Features
 
