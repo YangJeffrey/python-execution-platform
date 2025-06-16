@@ -2,8 +2,6 @@
 
 Built with Next.js, TypeScript, and FastAPI, the platform uses Docker-in-Docker to provide isolated, real-time code execution environments.
 
-![Demo Screenshot](/public/screenshot-example.png)
-
 ### Features
 
 - Secure Python execution environment supporting text and image/file output
